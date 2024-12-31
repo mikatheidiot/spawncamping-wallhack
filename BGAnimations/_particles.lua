@@ -2,7 +2,7 @@ local t = Def.ActorFrame{}
 
 local enabled = themeConfig:get_data().global.Particles
 
-local particleAmount = 25
+local particleAmount = 40
 local dx = {}
 local dy = {}
 local alpha = {}
@@ -31,10 +31,10 @@ local function makeParticle(index)
 		BeginCommand=function (self)
 			self:sleep(index*0.1)
 			local size = math.random(20,50)
-			self:zoomto(size,size/5)
+			self:zoomto(size,size/4)
 			self:y(SCREEN_HEIGHT)
 			self:x(math.random(0,SCREEN_WIDTH))
-			self:diffuse(HSV(math.random(0,360),0.4,1))
+			self:diffuse(HSV(math.random(300,360),math.random(1,4)/5,1))
 			dx[index] = 0--math.random()*5+1
 			dy[index] = math.random()*10+1
 			alpha[index] = math.random()*4
@@ -56,7 +56,7 @@ local function makeParticle(index)
 		ResetPositionCommand = function(self)
 			alpha[index] = math.random()*2+2
 			dy[index] = math.random()*10+1
-			self:diffuse(HSV(math.random(0,360),0.4,1))
+			self:diffuse(HSV(math.random(300,360),math.random(1,4)/5,1))
 			self:diffusealpha(alpha[index])
 				self:x(math.random(0,SCREEN_WIDTH))
 				self:y(SCREEN_HEIGHT)
