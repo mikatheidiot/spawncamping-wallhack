@@ -113,7 +113,7 @@ local function oldEvalStuff()
 		end
 	}
 
-	-- Timing/Judge Difficulty
+	--[[ Timing/Judge Difficulty
 	t[#t+1] = LoadFont("Common Normal")..{
 		InitCommand = function(self)
 			self:xy(10,50)
@@ -143,13 +143,13 @@ local function oldEvalStuff()
 			self:settextf("Life Difficulty: %d",GetLifeDifficulty())
 		end
 	}
-
+]]--
 	-- Music Rate/Haste
-	t[#t+1] = LoadFont("Common Normal")..{
+	t[#t+1] = LoadFont("Common Large")..{
 		InitCommand = function(self)
-			self:xy(SCREEN_CENTER_X,120)
-			self:zoom(0.48)
-			self:diffuse(color(colorConfig:get_data().evaluation.BackgroundText)):diffusealpha(0.8)
+			self:xy(SCREEN_CENTER_X,122)
+			self:zoom(0.27)
+			self:diffuse(color(colorConfig:get_data().evaluation.BackgroundText)):diffusealpha(1)
 			self:settextf("Rate: %s", rate)
 		end
 	}
@@ -157,11 +157,11 @@ local function oldEvalStuff()
 	-- Mod List
 	t[#t+1] = LoadFont("Common Normal")..{
 		InitCommand = function(self)
-			self:xy(10,80)
+			self:xy(88,140)
 			self:zoom(0.45)
 			self:halign(0)
 			self:maxwidth((SCREEN_WIDTH/2 - 133 - 10)/0.45)
-			self:diffuse(color(colorConfig:get_data().evaluation.BackgroundText)):diffusealpha(0.8)
+			self:diffuse(color(colorConfig:get_data().evaluation.BackgroundText)):diffusealpha(1)
 			local mods = GAMESTATE:GetPlayerState():GetPlayerOptionsString("ModsLevel_Current")
 			self:settextf("Mods: %s", mods)
 		end
@@ -193,13 +193,13 @@ local function oldEvalStuff()
 
 
 	-- Song title
-	t[#t+1] = LoadFont("Common Normal")..{
+	t[#t+1] = LoadFont("Common BLarge")..{
 		InitCommand = function(self)
-			self:xy(SCREEN_CENTER_X+5+(266/2),50)
-			self:zoom(0.6)
-			self:maxwidth(((SCREEN_WIDTH/2 -5 -266/2)/0.6) - 10)
-			self:diffuse(color(colorConfig:get_data().evaluation.BackgroundText)):diffusealpha(0.8)
-			self:halign(0):valign(0)
+			self:xy(SCREEN_CENTER_X-7-(266/2),48)
+			self:zoom(0.4)
+			self:maxwidth(((SCREEN_WIDTH/2 -5 -266/2)/0.4) - 30)
+			self:diffuse(color(colorConfig:get_data().evaluation.BackgroundText)):diffusealpha(1)
+			self:halign(1):valign(0)
 		end,
 		BeginCommand = function(self) 
 			self:settext(song:GetDisplayMainTitle()) 
@@ -209,11 +209,11 @@ local function oldEvalStuff()
 	-- Artist and subtitles
 	t[#t+1] = LoadFont("Common Normal")..{
 		InitCommand = function(self)
-			self:xy(SCREEN_CENTER_X+5+(266/2),65)
+			self:xy(SCREEN_CENTER_X-7-(266/2),68)
 			self:zoom(0.4)
-			self:maxwidth(((SCREEN_WIDTH/2 -5 -266/2)/0.4) - 10)
-			self:diffuse(color(colorConfig:get_data().evaluation.BackgroundText)):diffusealpha(0.8)
-			self:halign(0):valign(0)
+			self:maxwidth(((SCREEN_WIDTH/2 -5 -266/2)/0.4) - 30)
+			self:diffuse(color(colorConfig:get_data().evaluation.BackgroundText)):diffusealpha(1)
+			self:halign(1):valign(0)
 		end,
 		BeginCommand = function(self) 
 			if song:GetDisplaySubTitle() ~= "" then
@@ -223,6 +223,23 @@ local function oldEvalStuff()
 			end
 		end
 	}
+	
+	-- Skillsets
+	t[#t+1] = LoadFont("Common Normal")..{
+		InitCommand = function(self)
+			self:xy(SCREEN_CENTER_X+7+(266/2),52)
+			self:zoom(0.4)
+			self:maxwidth(((SCREEN_WIDTH/2 -5 -266/2)/0.4) - 30)
+			self:diffuse(color(colorConfig:get_data().evaluation.BackgroundText)):diffusealpha(1)
+			self:halign(0):valign(0)
+		end,
+		BeginCommand = function(self)
+			self:settextf( "%s\n%s\n%s",
+			steps:GetRelevantSkillsetsByMSDRank(getCurRateValue(), 1),
+			steps:GetRelevantSkillsetsByMSDRank(getCurRateValue(), 2),
+			steps:GetRelevantSkillsetsByMSDRank(getCurRateValue(), 3))
+		end
+	}	
 
 
 	-- Life graph and the stuff that goes with it
@@ -242,26 +259,31 @@ local function oldEvalStuff()
 				end
 			},
 
-			LoadFont("Common Large")..{
+			LoadFont("Common BLarge")..{
 				Name = "Grade",
 				InitCommand = function(self)
-					self:xy(-frameWidth/2+35,55):zoom(0.7):maxwidth(70/0.8)
+					self:xy(-frameWidth/2+42,52):zoom(0.7):maxwidth(70/0.8)
 				end,
 				BeginCommand=function(self) 
-					self:settext(THEME:GetString("Grade",ToEnumShortString(pss:GetHighScore():GetWifeGrade()))) 
+					local grade = pss:GetHighScore():GetWifeGrade()
+					self:settext(THEME:GetString("Grade",ToEnumShortString(grade)))
+					self:diffuse(getGradeColor(grade))
+					
 				end,
 				SetJudgeCommand = function(self)
-					self:settext(THEME:GetString("Grade", ToEnumShortString(getWifeGradeTier(rescoredPercentage))))
+					local grade = getWifeGradeTier(rescoredPercentage)
+					self:settext(THEME:GetString("Grade", ToEnumShortString(grade)))
+					self:diffuse(getGradeColor(grade))
 				end,
 				ResetJudgeCommand = function(self)
 					self:playcommand("Begin")
 				end
 			},
 
-			LoadFont("Common Normal")..{
-				Font= "Common Normal", 
+			LoadFont("Common Large")..{
+				Font= "Common Large", 
 				InitCommand= function(self)
-					self:y(50):zoom(0.7)
+					self:y(53):zoom(0.5)
 					self:halign(0)
 				end,
 				BeginCommand=function(self) 
@@ -326,44 +348,7 @@ local function oldEvalStuff()
 				end
 			},
 
-			LoadFont("Common Normal")..{
-				InitCommand= function(self)
-					self:y(63):zoom(0.4)
-					self:halign(0)
-				end,
-				BeginCommand=function(self) 
-					-- Fix when maxwife is available to lua
-					local pct = pss:GetWifeScore() * 100
-					local grade,diff = getNearbyGrade(pn,pss:GetWifeScore()*getMaxNotes(pn)*2,getWifeGradeTier(pct))
-					diff = diff >= 0 and string.format("+%0.2f", diff) or string.format("%0.2f", diff)
-					self:settextf("%s %s",THEME:GetString("Grade",ToEnumShortString(grade)),diff)
-					self:x(self:GetParent():GetChild("Grade"):GetX()+(math.min(self:GetParent():GetChild("Grade"):GetWidth()/0.8/2+15,35/0.8+15))*0.6)
-				end,
-				OffsetPlotModificationMessageCommand = function(self, params)
-					if params.Name == "ResetJudge" then
-						self:playcommand("Begin")
-						self:diffusealpha(1)
-					elseif params.Name == "NextJudge" or params.Name == "PrevJudge" then
-						self:diffusealpha(0)
-					end
-				end
-			},
-
-
-
-			LoadFont("Common Normal")..{
-				InitCommand = function(self)
-					self:xy(frameWidth/2-5,60-25+5):zoom(0.4):halign(1):valign(0):diffusealpha(0.7)
-				end,
-				BeginCommand=function(self)
-					local text = ""
-					text = string.format("Life: %.0f%%",pss:GetCurrentLife()*100)
-					if pss:GetCurrentLife() == 0 then
-						text = string.format("%s\n%.2fs Survived",text,pss:GetAliveSeconds())
-					end
-					self:settext(text)
-				end
-			}
+			
 		}
 		return t
 	end
@@ -621,7 +606,7 @@ local function oldEvalStuff()
 		t[#t+1] = LoadFont("Common Normal")..{
 
 			InitCommand = function(self)
-				self:xy(frameWidth/2-5,5):zoom(0.45):halign(1):valign(0)
+				self:xy(frameWidth/2-5,12):zoom(0.52):halign(1):valign(0)
 				self:glowshift():effectcolor1(color("1,1,1,0.05")):effectcolor2(color("1,1,1,0")):effectperiod(2)
 			end,
 			SetCommand=function(self) 
@@ -652,25 +637,17 @@ local function oldEvalStuff()
 		}
 
 		-- SSR
-		t[#t+1] = LoadFont("Common Normal")..{
+		t[#t+1] = LoadFont("Common BLarge")..{
 			Name = "SSR",
 			InitCommand = function(self) 
-				self:xy(frameWidth/2-5,19):zoom(0.5):halign(1):valign(0)
+				self:xy(frameWidth/2-5,43):zoom(.5):halign(1):valign(0)
 			end,
 			SetCommand=function(self) 
 				local meter = curScore:GetSkillsetSSR("Overall")
-				self:settextf("SSR   %5.2f", meter)
+				self:settextf("SSR %5.2f", meter)
 				self:AddAttribute(#"SSR", {Length = -1, Diffuse = byMSD(meter)})
 			end,
-			HighlightCommand = function(self)
-				if isOver(self) then
-					local meter = curScore:GetSkillsetSSR("Overall")
-					self:settextf("Score Specific Rating   %5.2f", meter)
-					self:AddAttribute(#"Score Specific Rating", {Length = -1, Diffuse = byMSD(meter)})
-				else
-					self:playcommand("Set")
-				end
-			end
+			
 		}
 
 		--ClearType
