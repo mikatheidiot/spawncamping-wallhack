@@ -75,6 +75,8 @@ local function input(event)
 						wheel:SelectSong(rsong)
 					end
 				end
+			elseif tonumber(event.char) == 8 then
+				wheel:SelectSong(wheel:GetSongs()[1])
 			end
 		end
 
@@ -137,7 +139,8 @@ t[#t+1] = LoadActor("../_mouse", "ScreenSelectMusic")
 -- Filtering contains: filters, tags
 -- Downloads contains: Downloads, Bundles
 -- Random Song: left click for any song, right click for just a song in this pack
-local tab = TAB:new({"Profile", "Song Info", "Group Info", "Filtering", "Downloads", "Playlists", "Random Song"})
+-- Return Top: go to first song in first pack
+local tab = TAB:new({"Profile", "Song Info", "Group Info", "Filtering", "Downloads", "Playlists", "Random Song", "Return Top"})
 t[#t+1] = tab:makeTabActors() .. {
 	OnCommand = function(self)
 		self:y(SCREEN_HEIGHT+tab.height/2)
@@ -190,6 +193,8 @@ t[#t+1] = tab:makeTabActors() .. {
 					wheel:SelectSong(rsong)
 				end
 			end
+		elseif params.name == "Return Top" then
+			wheel:SelectSong(wheel:GetSongs()[1])
 		end
 	end
 }
